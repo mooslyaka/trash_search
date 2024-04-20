@@ -1,8 +1,6 @@
 import telebot
 from telebot import types
-from PIL import Image
 import sqlite3
-import os.path
 from os import path
 
 bot = telebot.TeleBot("7137374641:AAHuBp-BIcG6QiIaS7pDkCLzPG-UCjlAZao")
@@ -38,7 +36,7 @@ def stats(message):
     markup.add(back_button)
     trash_count = str(cur.execute("""SELECT count_trash FROM Users WHERE tg_id=(?)""", (message.from_user.id, )).fetchone())[1:-2]
     fine = str(cur.execute("""SELECT fine FROM Users WHERE tg_id=(?)""", (message.from_user.id, )).fetchone())[1:-2]
-    bot.send_message(message.chat.id, f"""Вот ваша статистика {message.from_user.first_name}:
+    bot.send_message(message.chat.id, f"""Вот ваша статистика, {message.from_user.first_name}:
     Запросов принято: {trash_count}
     Место в топе: 
     Штрафов: {fine}""", reply_markup=markup)
@@ -53,7 +51,7 @@ def yes(message):
     markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
     back = types.KeyboardButton(text="Отмена❌")
     markup.add(back)
-    bot.send_message(message.chat.id, "Сначала отправте фото неубранной мусорки", reply_markup=markup)
+    bot.send_message(message.chat.id, "Сначала отправьте фото неубранной мусорки", reply_markup=markup)
 
 
 def write_coord(longitude, latitude):
@@ -96,7 +94,7 @@ def image(message):
             button_geo = types.KeyboardButton(text="Отправить местоположение🌏", request_location=True)
             back = types.KeyboardButton(text="Отмена❌")
             markup.add(button_geo, back)
-            bot.send_message(message.chat.id, "Ваше фото принято, теперь отправте свою геолоцаию", reply_markup=markup)
+            bot.send_message(message.chat.id, "Ваше фото принято, теперь отправьте свою геолкоцаию", reply_markup=markup)
 
 
 @bot.message_handler(content_types=["text"])
