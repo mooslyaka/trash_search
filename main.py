@@ -39,7 +39,9 @@ def main():
         print(user)
     app.run()
 
-
+@app.route('/')
+def baseredirect():
+    return redirect('/login')
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
     form = RegisterForm()
