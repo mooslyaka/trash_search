@@ -2,7 +2,7 @@ from flask import Flask, redirect, render_template
 from data import db_session
 from data.users import User
 from forms.user import RegisterForm, LoginForm
-from flask_login import LoginManager, login_user
+from flask_login import LoginManager, login_user, login_required
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -39,9 +39,13 @@ def main():
         print(user)
     app.run()
 
-@app.route('/')
-def baseredirect():
-    return redirect('/login')
+
+@app.route('/settings')
+@login_required
+def settings():
+    pass
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
     form = RegisterForm()
