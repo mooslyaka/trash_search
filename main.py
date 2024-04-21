@@ -2,7 +2,7 @@ from flask import Flask, redirect, render_template
 from data import db_session
 from data.users import User
 from forms.user import RegisterForm, LoginForm
-from flask_login import LoginManager, login_user, login_required
+from flask_login import LoginManager, login_user, current_user
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -40,10 +40,11 @@ def main():
     app.run()
 
 
-@app.route('/settings')
-@login_required
-def settings():
-    pass
+@app.route('/')
+def hello():
+    if not current_user.is_authenticated:
+         return redirect('/register')
+    return redirect('/login')
 
 
 @app.route('/register', methods=['GET', 'POST'])
