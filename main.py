@@ -1,12 +1,12 @@
 import telebot
 from telebot import types
-from PIL import Image
 import sqlite3
-import os.path
 from os import path
+import threading
 
+lock = threading.Lock()
 bot = telebot.TeleBot("7137374641:AAHuBp-BIcG6QiIaS7pDkCLzPG-UCjlAZao")
-
+src_image = None
 con = sqlite3.connect("trash_search_db.sql", check_same_thread=False)
 cur = con.cursor()
 
@@ -57,8 +57,8 @@ def yes(message):
 
 
 def write_coord(longitude, latitude):
-    with open("coordinates.txt", "a") as file:
-        file.write(f"{str(longitude)} {str(latitude)} \n")
+    with open("all_coordinates.txt", "a") as file:
+        file.write(f"{str(longitude)} {str(latitude)} {src_image}\n")
 
 
 @bot.message_handler(content_types=["location"])
@@ -78,10 +78,12 @@ def check_geo(message):
 
 @bot.message_handler(func=lambda m: True, content_types=["photo"])
 def image(message):
+    global src_image
     if not check_fine(message):
         file_info = bot.get_file(message.photo[len(message.photo) - 1].file_id)
         downloaded_file = bot.download_file(file_info.file_path)
         src = file_info.file_path
+        src_image = src
         if path.exists(src):
             bot.send_message(message.chat.id, "+1 штраф")
             fine = cur.execute("""SELECT fine FROM Users WHERE tg_id=(?)""", (message.from_user.id, )).fetchone()
