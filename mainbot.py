@@ -94,7 +94,7 @@ def image(message):
             button_geo = types.KeyboardButton(text="Отправить местоположение🌏", request_location=True)
             back = types.KeyboardButton(text="Отмена❌")
             markup.add(button_geo, back)
-            bot.send_message(message.chat.id, "Ваше фото принято, теперь отправьте свою геолкоцаию", reply_markup=markup)
+            bot.send_message(message.chat.id, "Ваше фото принято, теперь отправьте свою геолокацаию", reply_markup=markup)
 
 
 @bot.message_handler(content_types=["text"])
