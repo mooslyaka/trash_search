@@ -29,6 +29,8 @@ def callback(call):
     if call.message:
         if str(call.data).split()[0] == "1":
             write_coord(str(call.data).split()[1], str(call.data).split()[2])
+        if str(call.data).split()[0] == "0":
+            os.remove(f'{str(call.data).split()[1]}')
 
 
 def check_photo(message, file, longitude, latitude):
@@ -36,7 +38,7 @@ def check_photo(message, file, longitude, latitude):
     image = open(file, "rb")
     markup = types.InlineKeyboardMarkup()
     markup.add(types.InlineKeyboardButton("Одобрить", callback_data=f"1 {longitude} {latitude}"))
-    markup.add(types.InlineKeyboardButton("Отклонить", callback_data="0"))
+    markup.add(types.InlineKeyboardButton("Отклонить", callback_data=f"0 {file}"))
     msg = bot.send_photo(message.chat.id, photo=image, reply_markup=markup)
 
 
@@ -54,8 +56,6 @@ def text(message):
             for i in list_coords:
                 i = i.split()
                 check_photo(message, i[2], i[0], i[1])
-        else:
-            bot.send_message(message.chat.id, "Заявок пока нет")
 
 
 bot.polling(none_stop=True)
