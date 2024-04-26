@@ -52,11 +52,9 @@ def text(message):
     if message.text == "Проверять!":
         file = open("all_coordinates.txt", 'r')
         list_coords = file.readlines()
-        print(list_coords)
         if list_coords:
             for i in list_coords:
                 i = i.split()
-                print("ASD")
                 check_photo(message, i[2], i[0], i[1])
 
 
