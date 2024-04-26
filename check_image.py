@@ -54,6 +54,8 @@ def text(message):
             for i in list_coords:
                 i = i.split()
                 check_photo(message, i[2], i[0], i[1])
+        else:
+            bot.send_message(message.chat.id, "Заявок пока нет")
 
 
 bot.polling(none_stop=True)
