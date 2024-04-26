@@ -47,8 +47,6 @@ def write_coord(longitude, latitude):
 
 @bot.message_handler(content_types=["text"])
 def text(message):
-    if message.text == "Одобрить":
-        write_coord()
     if message.text == "Проверять!":
         file = open("all_coordinates.txt", 'r')
         list_coords = file.readlines()
