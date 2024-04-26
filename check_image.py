@@ -18,9 +18,9 @@ def check_man(message):
 def start(message):
     if check_man(message):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        markup.add(types.KeyboardButton("Конечно!"))
+        markup.add(types.KeyboardButton("Проверять!"))
         bot.send_message(message.chat.id,
-                         f"Здравствуйте, {message.from_user.first_name}, желаете ли вы начать помогать городу?",
+                         f"Здравствуйте, {message.from_user.first_name}, начать проверять заявки?",
                          reply_markup=markup)
 
 
@@ -29,7 +29,6 @@ def callback(call):
     if call.message:
         if str(call.data).split()[0] == "1":
             write_coord(str(call.data).split()[1], str(call.data).split()[2])
-        bot.edit_message_media(media=image, chat_id=None, message_id=None, inline_message_id=None, reply_markup=None)
 
 
 def check_photo(message, file, longitude, latitude):
@@ -50,12 +49,14 @@ def write_coord(longitude, latitude):
 def text(message):
     if message.text == "Одобрить":
         write_coord()
-    if message.text == "проверить":
+    if message.text == "Проверять!":
         file = open("all_coordinates.txt", 'r')
         list_coords = file.readlines()
+        print(list_coords)
         if list_coords:
             for i in list_coords:
                 i = i.split()
+                print("ASD")
                 check_photo(message, i[2], i[0], i[1])
 
 
