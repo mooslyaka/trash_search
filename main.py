@@ -18,12 +18,12 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
+folder_path = r'C:\Users\Home\PycharmProjects\trash_search6\photos'
 listofphotos = []
-for path, subdirs, files in os.walk(r'C:\Users\Home\PycharmProjects\trash_search6\photos'):
-    for filename in files:
-        f = os.path.join(path, filename)
-        fshort = f.split('\\')
-        listofphotos.append(fshort[-1])
+for file_name in os.listdir(folder_path):
+    if os.path.isfile(os.path.join(folder_path, file_name)):
+        listofphotos.append(file_name)
+print(listofphotos)
 
 
 def get_address(lonlat):
@@ -57,7 +57,7 @@ def base():
     print(lines[numerationpages])
     print(listofphotos[numerationpages])
     return render_template('main.html', lonlat=lines[numerationpages], address=get_address(lines[numerationpages]),
-                           photoname='2013040119302 (2).jpg')
+                           photoname=str(listofphotos[numerationpages]))
 
 
 @login_manager.user_loader
