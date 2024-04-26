@@ -3,11 +3,61 @@ from data import db_session
 from data.users import User
 from forms.user import RegisterForm, LoginForm
 from flask_login import LoginManager, login_user, current_user
+import requests
+import os
 
-app = Flask(__name__)
+numerationpages = -1  # счетчик для прокрутки заявок
+with open('coordinates.txt') as file:
+    lines = [line.rstrip() for line in file]
+
+app = Flask(__name__,
+            static_url_path='',
+            static_folder='photos',
+            template_folder='templates')
 login_manager = LoginManager()
 login_manager.init_app(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+
+listofphotos = []
+for path, subdirs, files in os.walk(r'C:\Users\Home\PycharmProjects\trash_search6\photos'):
+    for filename in files:
+        f = os.path.join(path, filename)
+        fshort = f.split('\\')
+        listofphotos.append(fshort[-1])
+
+
+def get_address(lonlat):
+    geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode={lonlat}&format=json"
+    response = requests.get(geocoder_request)
+    if response:
+        json_response = response.json()
+        toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
+        toponym_address = toponym["metaDataProperty"]["GeocoderMetaData"]["text"]
+        return (toponym_address)
+    else:
+        print("Ошибка выполнения запроса:")
+        print(geocoder_request)
+        print("Http статус:", response.status_code, "(", response.reason, ")")
+        return 'не найден'
+
+
+def main():
+    db_session.global_init("db/blogs.db")
+    app.run()
+
+
+@app.route('/')
+def base():
+    if not current_user.is_authenticated:
+        return redirect('/register')
+    global numerationpages
+    numerationpages += 1
+    numerationpages = numerationpages % len(lines)
+    print(numerationpages)
+    print(lines[numerationpages])
+    print(listofphotos[numerationpages])
+    return render_template('main.html', lonlat=lines[numerationpages], address=get_address(lines[numerationpages]),
+                           photoname='2013040119302 (2).jpg')
 
 
 @login_manager.user_loader
@@ -29,22 +79,6 @@ def login():
                                message="Неправильный логин или пароль",
                                form=form)
     return render_template('login.html', title='Авторизация', form=form)
-
-
-def main():
-    db_session.global_init("db/blogs.db")
-    user = User()
-    db_sess = db_session.create_session()
-    for user in db_sess.query(User).filter(User.id > 1, User.email.notilike("%1%")):
-        print(user)
-    app.run()
-
-
-@app.route('/')
-def hello():
-    if not current_user.is_authenticated:
-         return redirect('/register')
-    return redirect('/login')
 
 
 @app.route('/register', methods=['GET', 'POST'])
