@@ -18,7 +18,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
-path = r'C:\Users\Home\PycharmProjects\trash_search6\photos'
+path = r'C:\Users\Home\PycharmProjects\trash_search9\photos'
 listofphotos = []
 for filename in os.listdir(path):
     if os.path.isfile(os.path.join(path, filename)):
