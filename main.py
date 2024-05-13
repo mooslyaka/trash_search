@@ -4,6 +4,7 @@ from data.users import User
 from forms.user import RegisterForm, LoginForm
 from flask_login import LoginManager, login_user, current_user
 import requests
+import sys
 import os
 
 numerationpages = -1  # счетчик для прокрутки заявок
@@ -40,6 +41,19 @@ def get_address(lonlat):
         return 'не найден'
 
 
+def getImage(lonlat):
+    lonlat = lonlat.split()
+    map_request = f"http://static-maps.yandex.ru/1.x/?ll={lonlat[0]},{lonlat[1]}&spn=0.002,0.002&l=map"
+    response = requests.get(map_request)
+
+    if not response:
+        print("Ошибка выполнения запроса:")
+        print(map_request)
+        print("Http статус:", response.status_code, "(", response.reason, ")")
+        sys.exit(1)
+    return response.content
+
+
 def main():
     db_session.global_init("db/blogs.db")
     app.run()
@@ -53,7 +67,7 @@ def base():
     numerationpages += 1
     numerationpages = numerationpages % len(lines)
     return render_template('main.html', lonlat=lines[numerationpages], address=get_address(lines[numerationpages]),
-                           photoname=str(listofphotos[numerationpages]))
+                           photoname=str(listofphotos[numerationpages]), photoname1=getImage(lines[numerationpages]))
 
 
 @login_manager.user_loader
