@@ -1,11 +1,15 @@
 import telebot
 from telebot import types
 import os
+import telebot, time
+import datetime
 
 bot = telebot.TeleBot("7016202494:AAEutxmMaJuTvAJS184seuOFgKVF3lxyWUs")
 list_managers = ["mooslyaka"]
 msg = None
 image = None
+
+
 def check_man(message):
     if message.from_user.first_name in list_managers:
         return True
@@ -44,7 +48,7 @@ def check_photo(message, file, longitude, latitude):
 
 def write_coord(longitude, latitude):
     with open("coordinates.txt", "a") as file:
-        file.write(f"{str(longitude)} {str(latitude)}\n")
+        file.write(f"{str(longitude)} {str(latitude)} {datetime.datetime.now()}\n")
 
 
 @bot.message_handler(content_types=["text"])
