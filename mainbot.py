@@ -2,6 +2,7 @@ import telebot
 from telebot import types
 import sqlite3
 from os import path
+import datetime
 
 bot = telebot.TeleBot("7137374641:AAHuBp-BIcG6QiIaS7pDkCLzPG-UCjlAZao")
 
@@ -38,7 +39,6 @@ def stats(message):
     fine = str(cur.execute("""SELECT fine FROM Users WHERE tg_id=(?)""", (message.from_user.id, )).fetchone())[1:-2]
     bot.send_message(message.chat.id, f"""Вот ваша статистика, {message.from_user.first_name}:
     Запросов принято: {trash_count}
-    Место в топе: 
     Штрафов: {fine}""", reply_markup=markup)
 def main_menu(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -55,8 +55,8 @@ def yes(message):
 
 
 def write_coord(longitude, latitude):
-    with open("coordinates.txt", "a") as file:
-        file.write(f"{str(longitude)} {str(latitude)} \n")
+    with open("all_coordinates.txt", "a") as file:
+        file.write(f" {str(longitude)} {str(latitude)} {datetime.datetime.now()}\n")
 
 
 @bot.message_handler(content_types=["location"])
@@ -80,6 +80,8 @@ def image(message):
         file_info = bot.get_file(message.photo[len(message.photo) - 1].file_id)
         downloaded_file = bot.download_file(file_info.file_path)
         src = file_info.file_path
+        with open("all_coordinates.txt", "a") as file:
+            file.write(f"{src}")
         if path.exists(src):
             bot.send_message(message.chat.id, "+1 штраф")
             fine = cur.execute("""SELECT fine FROM Users WHERE tg_id=(?)""", (message.from_user.id, )).fetchone()
