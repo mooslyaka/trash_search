@@ -75,7 +75,7 @@ def base():
         return redirect('/register')
     global numerationpages
     global ld
-    if ld == 0:
+    if ld <= 0:
         return render_template('no.html')
     numerationpages += 1
     numerationpages = numerationpages % ld
@@ -144,7 +144,7 @@ def delete():
         print(data)
         print(ld)
         print(lonlat)
-        del data[]
+        del data[numerationpages]
         f.close()
     with open('all_coordinates.txt', 'w') as f:
         f.writelines(data)
