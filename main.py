@@ -7,10 +7,17 @@ import requests
 import sys
 import os
 
-numerationpages = -1  # счетчик для прокрутки заявок
-with open('coordinates.txt') as file:
+lonlat = []
+time = []
+numerationpages = -2  # счетчик для прокрутки заявок
+with open('all_coordinates.txt') as file:
     lines = [line.rstrip() for line in file]
-
+    for i in lines:
+        ali = i.split()
+        ll = ali[1] + ' ' + ali[2]
+        lonlat.append(ll)
+        time.append(ali[3] + ' ' + ali[4].split('.')[0])
+ld = len(lines)
 app = Flask(__name__,
             static_url_path='',
             static_folder='photos',
@@ -19,7 +26,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
-path = r'C:\Users\Home\PycharmProjects\trash_search9\photos'
+path = r'C:\Users\Home\PycharmProjects\trash_search16\photos'
 listofphotos = []
 for filename in os.listdir(path):
     if os.path.isfile(os.path.join(path, filename)):
@@ -51,7 +58,10 @@ def getImage(lonlat):
         print(map_request)
         print("Http статус:", response.status_code, "(", response.reason, ")")
         sys.exit(1)
-    return response.content
+    map_file = "photos/map.png"
+    with open(map_file, "wb") as file:
+        file.write(response.content)
+
 
 
 def main():
@@ -64,10 +74,14 @@ def base():
     if not current_user.is_authenticated:
         return redirect('/register')
     global numerationpages
+    global ld
+    if ld == 0:
+        return render_template('no.html')
     numerationpages += 1
-    numerationpages = numerationpages % len(lines)
-    return render_template('main.html', lonlat=lines[numerationpages], address=get_address(lines[numerationpages]),
-                           photoname=str(listofphotos[numerationpages]), photoname1=getImage(lines[numerationpages]))
+    numerationpages = numerationpages % ld
+    getImage(lonlat[numerationpages])
+    return render_template('main.html', lonlat=lonlat[numerationpages], address=get_address(lonlat[numerationpages]),
+                           photoname=str(listofphotos[numerationpages]), photoname1='map.png', time=time[numerationpages])
 
 
 @login_manager.user_loader
@@ -114,6 +128,29 @@ def reqister():
         db_sess.commit()
         return redirect('/login')
     return render_template('register.html', title='Регистрация', form=form)
+
+@app.route('/del')
+def delete():
+    global numerationpages
+    global ld
+    path = r'C:\Users\Home\PycharmProjects\trash_search16\photos'
+    fn = str(listofphotos[numerationpages])
+    ph = path + r'\'' + fn
+    ph = ph.replace("'", '')
+    os.remove(ph)
+    with open('all_coordinates.txt', 'r') as f:
+        data = f.readlines()
+        print(numerationpages)
+        print(data)
+        print(ld)
+        print(lonlat)
+        del data[]
+        f.close()
+    with open('all_coordinates.txt', 'w') as f:
+        f.writelines(data)
+    ld -= 1
+    return redirect('/')
+
 
 
 if __name__ == '__main__':

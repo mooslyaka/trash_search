@@ -6,15 +6,17 @@
   </head>
   <body>
     <h1>Просмотр активных заявок на уборку мусора</h1>
+    <p>Заявка была создана {{time}}</p>
     <p>Координаты: {{lonlat}}</p>
     <p>Адрес: {{address}}</p>
     <img src="{{photoname}}"
          width="550"
          height="550">
     <img src="{{photoname1}}"
-         width="600"
-         height="450">
+         width="650"
+         height="550">
     <a class="button" href="http://127.0.0.1:5000" target="_blank">Следующая заявка</a>
     <a class="button" href="http://127.0.0.1:5000/login" target="_blank">Выйти из системы</a>
+    <a class="button" href="http://127.0.0.1:5000/del" target="_blank">Удалить заявку</a>
   </body>
 </html>
